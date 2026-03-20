@@ -10,4 +10,4 @@ RUN ./gradlew build -x test
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "java -jar build/libs/*.jar"]
+CMD ["java", "-cp", "build/libs/*.jar", "com.civilianshield.civilianshield.CivilianShieldApplication"]
