@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civilian Shield — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#050a0f; font-family:'Exo 2',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; }
+        body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,207,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,207,255,0.04) 1px,transparent 1px); background-size:30px 30px; z-index:0; }
+        .container { position:relative; z-index:1; width:100%; max-width:400px; padding:20px; }
+        .logo { text-align:center; margin-bottom:40px; }
+        .logo h1 { font-family:'Orbitron',monospace; font-size:32px; font-weight:900; background:linear-gradient(135deg,#00cfff,#00ff88); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .logo p { color:rgba(255,255,255,0.4); font-size:12px; letter-spacing:2px; margin-top:8px; }
+        .card { background:#0a1420; border:1px solid rgba(0,207,255,0.2); border-radius:20px; padding:32px; }
+        .tabs { display:flex; gap:0; margin-bottom:32px; background:rgba(0,0,0,0.3); border-radius:10px; padding:4px; }
+        .tab { flex:1; padding:10px; text-align:center; border-radius:8px; cursor:pointer; font-family:'Orbitron',monospace; font-size:11px; letter-spacing:2px; color:rgba(255,255,255,0.4); transition:all 0.3s; }
+        .tab.active { background:rgba(0,207,255,0.15); color:#00cfff; border:1px solid rgba(0,207,255,0.3); }
+        .form-group { margin-bottom:20px; }
+        .form-group label { display:block; font-size:11px; letter-spacing:2px; color:rgba(0,207,255,0.6); margin-bottom:8px; font-family:'Orbitron',monospace; }
+        .form-group input { width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(0,207,255,0.2); border-radius:10px; padding:14px 16px; color:#fff; font-size:14px; font-family:'Exo 2',sans-serif; outline:none; transition:all 0.3s; }
+        .form-group input:focus { border-color:#00cfff; box-shadow:0 0 15px rgba(0,207,255,0.1); }
+        .form-group input::placeholder { color:rgba(255,255,255,0.2); }
+        .btn { width:100%; padding:16px; background:linear-gradient(135deg,#00cfff,#00ff88); border:none; border-radius:10px; color:#000; font-family:'Orbitron',monospace; font-size:14px; font-weight:700; cursor:pointer; letter-spacing:2px; transition:all 0.3s; margin-top:8px; }
+        .btn:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,207,255,0.3); }
+        .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+        .message { padding:12px 16px; border-radius:10px; font-size:13px; margin-bottom:16px; display:none; }
+        .message.success { background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); color:#00ff88; }
+        .message.error { background:rgba(255,45,45,0.1); border:1px solid rgba(255,45,45,0.3); color:#ff4444; }
+        .message.info { background:rgba(0,207,255,0.1); border:1px solid rgba(0,207,255,0.3); color:#00cfff; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo">
+        <h1>🛡️ CIVILIAN SHIELD</h1>
+        <p>PROTECTING LIVES ACROSS INDIA</p>
+    </div>
+
+    <div class="card">
+        <div class="tabs">
+            <div class="tab active" id="loginTab" onclick="showTab('login')">LOGIN</div>
+            <div class="tab" id="registerTab" onclick="showTab('register')">REGISTER</div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+            <div class="form-group">
+                <label>EMAIL</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>PASSWORD</label>
+                <input type="password" id="loginPassword" placeholder="Enter password">
+            </div>
+            <button class="btn" onclick="login()">LOGIN TO SHIELD</button>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerForm" style="display:none">
+            <div class="form-group">
+                <label>FULL NAME</label>
+                <input type="text" id="regName" placeholder="Your full name">
+            </div>
+            <div class="form-group">
+                <label>EMAIL</label>
+                <input type="email" id="regEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>PHONE</label>
+                <input type="tel" id="regPhone" placeholder="10 digit mobile number">
+            </div>
+            <div class="form-group">
+                <label>LOCATION</label>
+                <input type="text" id="regLocation" placeholder="Your city, India">
+            </div>
+            <div class="form-group">
+                <label>PASSWORD</label>
+                <input type="password" id="regPassword" placeholder="Create password">
+            </div>
+            <button class="btn" id="registerBtn" onclick="register()">CREATE ACCOUNT</button>
+        </div>
+
+        <!-- OTP FORM -->
+        <div id="otpForm" style="display:none">
+            <div class="form-group">
+                <label>CHECK YOUR EMAIL</label>
+                <input type="text" id="otpInput" placeholder="Enter 6 digit OTP" maxlength="6">
+            </div>
+            <p style="color:rgba(255,255,255,0.4); font-size:12px; margin-bottom:16px; text-align:center;" id="otpNote"></p>
+            <button class="btn" id="verifyBtn" onclick="verifyOtp()">VERIFY OTP</button>
+            <button class="btn" style="background:transparent; border:1px solid rgba(0,207,255,0.3); color:#00cfff; margin-top:8px;" onclick="showTab('register')">← GO BACK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var currentEmail = '';
+
+    function showTab(tab) {
+        document.getElementById('loginTab').classList.toggle('active', tab==='login');
+        document.getElementById('registerTab').classList.toggle('active', tab==='register');
+        document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = tab==='register' ? 'block' : 'none';
+        document.getElementById('otpForm').style.display = 'none';
+        hideMessage();
+    }
+
+    function showMessage(text, type) {
+        const m = document.getElementById('message');
+        m.textContent = text;
+        m.className = 'message ' + type;
+        m.style.display = 'block';
+    }
+
+    function hideMessage() {
+        document.getElementById('message').style.display = 'none';
+    }
+
+    async function login() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        if(!email || !password) { showMessage('Please fill all fields!', 'error'); return; }
+        try {
+            const res = await fetch('/api/user/login', {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({email, password})
+            });
+            const data = await res.json();
+            if(data.status === 'SUCCESS') {
+                localStorage.setItem('userName', data.name);
+                localStorage.setItem('userId', data.userId);
+                showMessage('Welcome back ' + data.name + '! Redirecting...', 'success');
+                setTimeout(() => window.location.href = '/index.html', 1500);
+            } else {
+                showMessage(data.message, 'error');
+            }
+        } catch(e) {
+            showMessage('Connection error. Try again!', 'error');
+        }
+    }
+
+    async function register() {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const phone = document.getElementById('regPhone').value;
+        const location = document.getElementById('regLocation').value;
+        const password = document.getElementById('regPassword').value;
+
+        if(!name||!email||!phone||!location||!password) {
+            showMessage('Please fill all fields!', 'error');
+            return;
+        }
+
+        document.getElementById('registerBtn').disabled = true;
+        showMessage('Sending OTP to your email...', 'info');
+
+        try {
+            const res = await fetch('/api/user/register', {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({name, email, phone, location, password})
+            });
+            const data = await res.json();
+
+            if(data.status === 'OTP_SENT') {
+                currentEmail = email;
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('otpForm').style.display = 'block';
+                document.getElementById('otpNote').textContent = 'OTP sent to ' + email;
+                showMessage('Check your email for the OTP!', 'success');
+                document.getElementById('registerBtn').disabled = false;
+            } else {
+                showMessage(data.message, 'error');
+                document.getElementById('registerBtn').disabled = false;
+            }
+        } catch(e) {
+            showMessage('Connection error. Try again!', 'error');
+            document.getElementById('registerBtn').disabled = false;
+        }
+    }
+
+    async function verifyOtp() {
+        const otp = document.getElementById('otpInput').value;
+        if(!otp || otp.length !== 6) {
+            showMessage('Enter valid 6 digit OTP!', 'error');
+            return;
+        }
+
+        document.getElementById('verifyBtn').disabled = true;
+        showMessage('Verifying OTP...', 'info');
+
+        try {
+            const res = await fetch('/api/user/verify-otp', {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ email: currentEmail, otp: otp })
+            });
+            const data = await res.json();
+
+            if(data.status === 'SUCCESS') {
+                showMessage('Welcome to Civilian Shield, ' + data.name + '! Redirecting...', 'success');
+                setTimeout(() => showTab('login'), 2000);
+            } else {
+                showMessage(data.message, 'error');
+                document.getElementById('verifyBtn').disabled = false;
+            }
+        } catch(e) {
+            showMessage('Connection error. Try again!', 'error');
+            document.getElementById('verifyBtn').disabled = false;
+        }
+    }
+</script>
+</body>
+</html>
