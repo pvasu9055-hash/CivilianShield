@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -19,6 +21,11 @@ public class UserController {
 
     private Map<String, String> otpStore = new HashMap<>();
     private Map<String, User> pendingUsers = new HashMap<>();
+
+    @GetMapping("/")
+    public void home(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/login.html");
+    }
 
     @PostMapping("/api/user/register")
     public Map<String, Object> register(@RequestBody User user) {
