@@ -83,29 +83,15 @@
             </div>
             <button class="btn" id="registerBtn" onclick="register()">CREATE ACCOUNT</button>
         </div>
-
-        <!-- OTP FORM -->
-        <div id="otpForm" style="display:none">
-            <div class="form-group">
-                <label>CHECK YOUR EMAIL</label>
-                <input type="text" id="otpInput" placeholder="Enter 6 digit OTP" maxlength="6">
-            </div>
-            <p style="color:rgba(255,255,255,0.4); font-size:12px; margin-bottom:16px; text-align:center;" id="otpNote"></p>
-            <button class="btn" id="verifyBtn" onclick="verifyOtp()">VERIFY OTP</button>
-            <button class="btn" style="background:transparent; border:1px solid rgba(0,207,255,0.3); color:#00cfff; margin-top:8px;" onclick="showTab('register')">← GO BACK</button>
-        </div>
     </div>
 </div>
 
 <script>
-    var currentEmail = '';
-
     function showTab(tab) {
         document.getElementById('loginTab').classList.toggle('active', tab==='login');
         document.getElementById('registerTab').classList.toggle('active', tab==='register');
         document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
         document.getElementById('registerForm').style.display = tab==='register' ? 'block' : 'none';
-        document.getElementById('otpForm').style.display = 'none';
         hideMessage();
     }
 
@@ -157,7 +143,7 @@
         }
 
         document.getElementById('registerBtn').disabled = true;
-        showMessage('Sending OTP to your email...', 'info');
+        showMessage('Creating account...', 'info');
 
         try {
             const res = await fetch('/api/user/register', {
@@ -167,12 +153,9 @@
             });
             const data = await res.json();
 
-            if(data.status === 'OTP_SENT') {
-                currentEmail = email;
-                document.getElementById('registerForm').style.display = 'none';
-                document.getElementById('otpForm').style.display = 'block';
-                document.getElementById('otpNote').textContent = 'OTP sent to ' + email;
-                showMessage('Check your email for the OTP!', 'success');
+            if(data.status === 'SUCCESS') {
+                showMessage('Account created! Switching to login...', 'success');
+                setTimeout(() => showTab('login'), 2000);
                 document.getElementById('registerBtn').disabled = false;
             } else {
                 showMessage(data.message, 'error');
@@ -181,37 +164,6 @@
         } catch(e) {
             showMessage('Connection error. Try again!', 'error');
             document.getElementById('registerBtn').disabled = false;
-        }
-    }
-
-    async function verifyOtp() {
-        const otp = document.getElementById('otpInput').value;
-        if(!otp || otp.length !== 6) {
-            showMessage('Enter valid 6 digit OTP!', 'error');
-            return;
-        }
-
-        document.getElementById('verifyBtn').disabled = true;
-        showMessage('Verifying OTP...', 'info');
-
-        try {
-            const res = await fetch('/api/user/verify-otp', {
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({ email: currentEmail, otp: otp })
-            });
-            const data = await res.json();
-
-            if(data.status === 'SUCCESS') {
-                showMessage('Welcome to Civilian Shield, ' + data.name + '! Redirecting...', 'success');
-                setTimeout(() => showTab('login'), 2000);
-            } else {
-                showMessage(data.message, 'error');
-                document.getElementById('verifyBtn').disabled = false;
-            }
-        } catch(e) {
-            showMessage('Connection error. Try again!', 'error');
-            document.getElementById('verifyBtn').disabled = false;
         }
     }
 </script>

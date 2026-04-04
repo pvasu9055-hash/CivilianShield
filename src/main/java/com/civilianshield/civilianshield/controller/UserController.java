@@ -37,31 +37,14 @@ public class UserController {
             return response;
         }
 
-        String otp = String.valueOf(100000 + new Random().nextInt(900000));
-        otpStore.put(user.getEmail(), otp);
-        pendingUsers.put(user.getEmail(), user);
+        // Auto-approve registration (skip OTP for testing)
+        user.setStatus("SAFE");
+        userRepository.save(user);
 
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("pvasu9055@gmail.com");
-            message.setTo(user.getEmail());
-            message.setSubject("🛡️ Civilian Shield — Your OTP");
-            message.setText(
-                    "Hello " + user.getName() + ",\n\n" +
-                            "Your OTP for Civilian Shield registration is:\n\n" +
-                            "  " + otp + "\n\n" +
-                            "Valid for 10 minutes. Do not share with anyone.\n\n" +
-                            "Stay Safe,\nCivilian Shield Team 🛡️"
-            );
-            mailSender.send(message);
-            response.put("status", "OTP_SENT");
-            response.put("message", "OTP sent to " + user.getEmail());
-            response.put("email", user.getEmail());
-        } catch (Exception e) {
-            response.put("status", "ERROR");
-            response.put("message", "Failed to send OTP: " + e.getMessage());
-        }
-
+        response.put("status", "SUCCESS");
+        response.put("message", "Account created! You can now login.");
+        response.put("userId", user.getId());
+        response.put("name", user.getName());
         return response;
     }
 
